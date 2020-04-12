@@ -41,9 +41,6 @@ $ curl -XGET "http://localhost:9200/natureremo/_mapping?pretty"
         "Timestamp" : {
           "type" : "date"
         },
-        "created_at" : {
-          "type" : "date"
-        },
         "humidity" : {
           "type" : "float"
         },
