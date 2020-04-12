@@ -9,12 +9,25 @@ Metering items are humidity, temperature, and illuminance.
 
 Go / Rabbit MQ / ElasticSearch / Kibana
 
+![iot-home](https://user-images.githubusercontent.com/19683276/79072208-bbb45200-7d1a-11ea-8a69-49d61a79d61e.png)
+
 ## Starting Local
 
 ```bash
 $ cp .env.sample .env // edit your information
 $ docker-compose up
 ```
+
+## RabbitMQ Local
+
+*RabbitMQ endpoint*
+
+`http://localhost:5672/`
+
+
+*RabbitMQ Management Admin Panel*
+
+`http://localhost:15672/`
 
 ## ElasticSearch Local Settings
 
@@ -54,3 +67,9 @@ $ curl -XGET "http://localhost:9200/natureremo/_mapping?pretty"
   }
 }
 ```
+
+## Kibana Local
+
+*UI Dashboard*
+
+`http://localhost:5601/`
