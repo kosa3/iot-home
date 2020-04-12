@@ -1,13 +1,6 @@
 version: "3"
 
 services:
-  broker:
-    container_name: rabbitmq
-    image: rabbitmq:3.8-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   pub:
     container_name: pub
     build:
@@ -17,3 +10,35 @@ services:
       NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
     depends_on:
       - broker
+  sub:
+    container_name: sub
+    build:
+      context: subscriber
+    tty: true
+    depends_on:
+      - broker
+      - es
+  broker:
+    container_name: broker
+    image: rabbitmq:3.8-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  es:
+    container_name: es
+    build:
+      context: datastore/elasticsearch
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+  kibana:
+    container_name: kibana
+    build:
+      context: datastore/kibana
+    ports:
+      - "5601:5601"
+
+volumes:
+  es-data:
+    driver: local

@@ -12,10 +12,10 @@ import (
 )
 
 type SensorData struct {
-	DeviceId string
-	Temp     float64
-	Lux      float64
-	Humidity float64
+	DeviceId string  `json:"id"`
+	Temp     float64 `json:"temp"`
+	Lux      float64 `json:"lux"`
+	Humidity float64 `json:"humidity"`
 }
 
 func main() {

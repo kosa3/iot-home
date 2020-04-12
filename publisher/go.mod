@@ -1,4 +1,4 @@
-module github.com/kosa3/iot-home
+module github.com/kosa3/iot-home/publisher
 
 go 1.14
 

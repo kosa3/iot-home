@@ -1,0 +1,26 @@
+{
+  "remo": {
+    "mappings": {
+      "device": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "temperature": {
+            "type": "float"
+          },
+          "illumination": {
+            "type": "float"
+          },
+          "humidity": {
+            "type": "float"
+          },
+          "created_at": {
+            "type": "date",
+            "format": "dateOptionalTime"
+          }
+        }
+      }
+    }
+  }
+}
