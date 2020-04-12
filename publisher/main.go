@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-type SensorData struct {
-	DeviceId string  `json:"id"`
-	Temp     float64 `json:"temp"`
-	Lux      float64 `json:"lux"`
-	Humidity float64 `json:"humidity"`
-}
-
 func main() {
 	cli := natureremo.NewClient(os.Getenv("NATURE_ACCESS_TOKEN"))
 	ctx := context.Background()
