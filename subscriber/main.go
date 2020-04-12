@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/elastic/go-elasticsearch"
 	"github.com/streadway/amqp"
 	"log"
 	"time"
@@ -55,6 +56,11 @@ func main() {
 		nil,    // args
 	)
 	failOnError(err, "Failed to register a consumer")
+
+	_, err = elasticsearch.NewDefaultClient()
+	if err != nil {
+		log.Fatalf("Error creating the client: %s", err)
+	}
 
 	forever := make(chan bool)
 
