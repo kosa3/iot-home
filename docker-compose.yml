@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  broker:
+    container_name: rabbitmq
+    image: rabbitmq:3.8-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  pub:
+    container_name: pub
+    build:
+      context: publisher
+    tty: true
+    environment:
+      NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
+    depends_on:
+      - broker
