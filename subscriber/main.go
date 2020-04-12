@@ -6,11 +6,12 @@ import (
 	"github.com/olivere/elastic/v7"
 	"github.com/streadway/amqp"
 	"log"
+	"os"
 )
 
 func main() {
 	// rabbitmqからキューを受け取りelasticsearchにデータを投入するsub
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@" + os.Getenv("RABBITMQ_ENDPOINT"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -41,7 +42,7 @@ func main() {
 
 	ctx := context.Background()
 	es, err := elastic.NewClient(
-		elastic.SetURL("http://localhost:9200"),
+		elastic.SetURL(os.Getenv("ES_ENDPOINT")),
 		elastic.SetSniff(false),
 	)
 	failOnError(err, "Failed to connect elasticsearch")

@@ -8,6 +8,7 @@ services:
     tty: true
     environment:
       NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
+      RABBITMQ_ENDPOINT: ${RABBITMQ_ENDPOINT}
     depends_on:
       - broker
   sub:
@@ -15,6 +16,10 @@ services:
     build:
       context: subscriber
     tty: true
+    environment:
+      NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
+      RABBITMQ_ENDPOINT: ${RABBITMQ_ENDPOINT}
+      ES_ENDPOINT: ${ES_ENDPOINT}
     depends_on:
       - broker
       - es

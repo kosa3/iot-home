@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@" + os.Getenv("RABBITMQ_ENDPOINT"))
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
