@@ -1,25 +1,26 @@
 {
-  "remo": {
-    "mappings": {
-      "device": {
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "temperature": {
-            "type": "float"
-          },
-          "illumination": {
-            "type": "float"
-          },
-          "humidity": {
-            "type": "float"
-          },
-          "created_at": {
-            "type": "date",
-            "format": "dateOptionalTime"
+  "mappings" : {
+    "properties" : {
+      "id" : {
+        "type" : "text",
+        "fields" : {
+          "keyword" : {
+            "type" : "keyword",
+            "ignore_above" : 256
           }
         }
+      },
+      "humidity" : {
+        "type" : "float"
+      },
+      "lux" : {
+        "type" : "float"
+      },
+      "temp" : {
+        "type" : "float"
+      },
+      "created_at" : {
+        "type" : "date"
       }
     }
   }

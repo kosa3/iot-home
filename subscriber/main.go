@@ -1,8 +1,9 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/elastic/go-elasticsearch"
+	"github.com/olivere/elastic/v7"
 	"github.com/streadway/amqp"
 	"log"
 	"time"
@@ -16,7 +17,7 @@ type SensorData struct {
 }
 
 type Protocol struct {
-	Message   SensorData
+	SensorData
 	Timestamp time.Time
 }
 
@@ -57,10 +58,13 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	_, err = elasticsearch.NewDefaultClient()
-	if err != nil {
-		log.Fatalf("Error creating the client: %s", err)
-	}
+	ctx := context.Background()
+	es, err := elastic.NewClient(
+		elastic.SetURL("http://localhost:9200"),
+		elastic.SetSniff(false),
+	)
+	failOnError(err, "Failed to connect elasticsearch")
+	defer es.Stop()
 
 	forever := make(chan bool)
 
@@ -71,7 +75,16 @@ func main() {
 			if err != nil {
 				failOnError(err, "Failed to unmarshal json")
 			}
-			log.Printf("Received a message: %v", p.Message)
+			_, err = es.Index().
+				Index("natureremo").
+				BodyJson(p).
+				Do(ctx)
+
+			if err != nil {
+				failOnError(err, "Failed to post data")
+			}
+
+			log.Printf("Received a message: %v", p.SensorData)
 		}
 	}()
 

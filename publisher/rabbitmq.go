@@ -6,7 +6,7 @@ import (
 )
 
 type Protocol struct {
-	Message   SensorData
+	SensorData
 	Timestamp time.Time
 }
 

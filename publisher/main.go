@@ -50,7 +50,7 @@ func main() {
 		fmt.Println("illumination:", device.NewestEvents[natureremo.SensortypeIllumination].Value)
 
 		p := &Protocol{
-			Message: SensorData{
+			SensorData: SensorData{
 				DeviceId: device.ID,
 				Temp:     device.NewestEvents[natureremo.SensorTypeTemperature].Value,
 				Lux:      device.NewestEvents[natureremo.SensortypeIllumination].Value,
