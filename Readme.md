@@ -70,3 +70,15 @@ $ curl -XGET "http://localhost:9200/natureremo/_mapping?pretty"
 *UI Dashboard*
 
 `http://localhost:5601/`
+
+## Cron Job
+
+*Mac*
+
+```bash
+$ cp job/iot-home.plist /Users/kosa3/Library/LaunchAgents
+# Load plist
+$ launchctl load ~/Library/LaunchAgents/iot-home.plist
+# UnLoad plist
+$ launchctl unload ~/Library/LaunchAgents/iot-home.plist
+```

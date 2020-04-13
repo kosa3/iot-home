@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>NATURE_ACCESS_TOKEN</key>
+        <string>yout_access_token</string>
+    </dict>
+    <key>Label</key>
+    <string>iot-home</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-cl</string>
+        <string>/Users/kosa3/go/iot-home/publisher/main</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>600</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/kosa3/script/iot-hone.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/kosa3/script/iot-hone.err</string>
+</dict>
+</plist>
