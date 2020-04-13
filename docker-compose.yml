@@ -1,28 +1,6 @@
 version: "3"
 
 services:
-  pub:
-    container_name: pub
-    build:
-      context: publisher
-    tty: true
-    environment:
-      NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
-      RABBITMQ_ENDPOINT: ${RABBITMQ_ENDPOINT}
-    depends_on:
-      - broker
-  sub:
-    container_name: sub
-    build:
-      context: subscriber
-    tty: true
-    environment:
-      NATURE_ACCESS_TOKEN: ${NATURE_ACCESS_TOKEN}
-      RABBITMQ_ENDPOINT: ${RABBITMQ_ENDPOINT}
-      ES_ENDPOINT: ${ES_ENDPOINT}
-    depends_on:
-      - broker
-      - es
   broker:
     container_name: broker
     image: rabbitmq:3.8-management
