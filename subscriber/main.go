@@ -2,12 +2,19 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/olivere/elastic/v7"
+	"github.com/elastic/go-elasticsearch/v7"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/streadway/amqp"
 	"log"
 	"os"
+	"strings"
 )
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
 
 func main() {
 	// rabbitmqからキューを受け取りelasticsearchにデータを投入するsub
@@ -40,33 +47,28 @@ func main() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	ctx := context.Background()
-	es, err := elastic.NewClient(
-		elastic.SetURL(os.Getenv("ES_ENDPOINT")),
-		elastic.SetSniff(false),
-	)
+	cfg := elasticsearch.Config{
+		Addresses: []string{
+			os.Getenv("ES_ENDPOINT"),
+		},
+	}
+	es, err := elasticsearch.NewClient(cfg)
 	failOnError(err, "Failed to connect elasticsearch")
-	defer es.Stop()
 
 	forever := make(chan bool)
 
 	go func() {
-		var p Protocol
 		for d := range msgs {
-			err := json.Unmarshal([]byte(d.Body), &p)
-			if err != nil {
-				failOnError(err, "Failed to unmarshal json")
+			req := esapi.IndexRequest{
+				Index:   "natureremo",
+				Body:    strings.NewReader(string(d.Body)),
+				Refresh: "true",
 			}
-			_, err = es.Index().
-				Index("natureremo").
-				BodyJson(p).
-				Do(ctx)
+			res, err := req.Do(context.Background(), es)
+			failOnError(err, "Error getting response")
+			defer res.Body.Close()
 
-			if err != nil {
-				failOnError(err, "Failed to post data")
-			}
-
-			log.Printf("Received a message: %v", p.SensorData)
+			log.Printf("Received a message: %v", string(d.Body))
 		}
 	}()
 
