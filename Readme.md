@@ -11,6 +11,17 @@ Go / Rabbit MQ / ElasticSearch / Kibana
 
 ![iot-home](https://user-images.githubusercontent.com/19683276/79072208-bbb45200-7d1a-11ea-8a69-49d61a79d61e.png)
 
+## System on GKE
+
+![k8s](https://user-images.githubusercontent.com/19683276/80268457-f71f2b00-86e1-11ea-95db-656262afce93.jpeg)
+
+
+```bash
+$ gcloud container clusters create iot-home --num-nodes=2
+$ kubectl create secret generic nature-key --from-literal=nature-token='YOUR_NATURE_ACCESS_TOKEN'
+$ kubectl apply -f iot-home.yaml
+```
+
 ## Starting Local
 
 ```bash
