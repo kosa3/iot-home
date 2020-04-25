@@ -1,0 +1,194 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: broker
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+        - image: rabbitmq:3.8-management
+          name: broker
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+spec:
+  selector:
+    app: broker
+  ports:
+    - protocol: TCP
+      port: 5672
+      targetPort: 5672
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-management-service
+spec:
+  selector:
+    app: broker
+  ports:
+    - protocol: TCP
+      port: 15672
+      targetPort: 15672
+  type: LoadBalancer
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: pub
+spec:
+  concurrencyPolicy: Replace
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - env:
+                - name: RABBITMQ_ENDPOINT
+                  value: broker-service
+                - name: NATURE_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: nature-key
+                      key: nature-token
+              name: pub
+              image: gcr.io/iot-home-274911/pub:v1
+          restartPolicy: OnFailure
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub
+  labels:
+    app: sub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sub
+  template:
+    metadata:
+      labels:
+        app: sub
+    spec:
+      containers:
+        - env:
+            - name: ES_ENDPOINT
+              value: http://es-service:9200
+            - name: RABBITMQ_ENDPOINT
+              value: broker-service
+          image: gcr.io/iot-home-274911/sub:v1
+          name: sub
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: es
+spec:
+  selector:
+    matchLabels:
+      app: es
+  serviceName: "es"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: es
+    spec:
+      containers:
+        - name: es
+          image: elasticsearch:7.6.2
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: bootstrap.memory_lock
+              value: "true"
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: es-data
+              mountPath: /es-data
+  volumeClaimTemplates:
+    - metadata:
+        name: es-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: es-service
+spec:
+  selector:
+    app: es
+  ports:
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: kibana:7.6.2
+          resources:
+            limits:
+              cpu: 1000m
+            requests:
+              cpu: 100m
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://es-service:9200
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-service
+  labels:
+    app: kibana
+spec:
+  selector:
+    app: kibana
+  ports:
+    - port: 5601
+      protocol: TCP
+      targetPort: 5601
+  type: LoadBalancer
